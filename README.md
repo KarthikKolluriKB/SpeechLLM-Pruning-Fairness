@@ -1,6 +1,9 @@
 # Pruning for Efficiency, Paying in Fairness
 
-Code for the paper *Pruning for Efficiency, Paying in Fairness: Demographic Disparities in Pruned Speech-LLMs*.
+Code for the paper **Pruning for Efficiency, Paying in Fairness: Demographic Disparities in Pruned Speech-LLMs**.
+
+**Authors:** Ganesh Pavan Kartikeya Bharadwaj Kolluri, Michael Kampouridis, Ravi Shekhar<br>
+School of Computer Science and Electronic Engineering, University of Essex, UK
 
 ## Summary
 
