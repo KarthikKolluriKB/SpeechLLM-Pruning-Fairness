@@ -164,17 +164,6 @@ python scoring/run_depth_sweep.py --dataset fairspeech \
 
 Condition labels become filenames, so give each corpus its own prefix. Two corpora evaluated at the same depth would otherwise overwrite each other's CSVs.
 
-## Citation
-
-```bibtex
-@misc{kolluri2026pruning,
-  title  = {Pruning for Efficiency, Paying in Fairness: Demographic Disparities in Pruned Speech-LLMs},
-  author = {Kolluri, Ganesh Pavan Kartikeya Bharadwaj and Kampouridis, Michael and Shekhar, Ravi},
-  year   = {2026},
-  note   = {School of Computer Science and Electronic Engineering, University of Essex}
-}
-```
-
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE).
