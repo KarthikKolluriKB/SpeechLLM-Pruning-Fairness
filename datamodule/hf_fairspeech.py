@@ -20,7 +20,7 @@ Output schema (data/fairspeech_hf/):
     speaker_id (= hash_name), gender, age, l1 (= first_language lowercased),
     ses (= socioeconomic_bkgd lowercased), ethnicity (lowercased), accent ('missing')
 
-LICENCE — IMPORTANT (Meta's terms):
+Licence (Meta's terms):
     Do NOT redistribute the produced HF dataset. The output stays under
     data/ and per-utterance evaluation output under results/, both of which
     are gitignored. Summary-level metrics (per-group WER, etc.) may be
@@ -206,7 +206,7 @@ def build(input_dir: Path, output_dir: Path, target_sr: int = 16000,
     print(f"  total audio:   {total_dur/3600.0:.2f} h  ({stats['kept']} rows)")
 
     if not batches:
-        raise SystemExit("Zero rows survived — check input_dir and the metadata schema.")
+        raise SystemExit("Zero rows survived. Check input_dir and the metadata schema.")
 
     print(f"[Fair-Speech] Concatenating {len(batches)} batches ...")
     final = concatenate_datasets(batches)
