@@ -32,30 +32,23 @@ DATASETS = {
         "hf_dataset_path": "data/cv22_hf/en",
         "demographic_source": "cv22_tsv",
         "demographic_columns": None,    # cv22_tsv path does its own join
-        "tag_suffix": "cv22",
     },
-    # Danish / Dutch Common Voice for the cross-lingual comparison.
-    # angle. Same cv22_tsv demographic join (gender/age/accent only; CV never
-    # collected race/SES), but you MUST pass --cv_test_tsv pointing at the
-    # matching-language transcript/<lang>/test.tsv (the auto-download default is
-    # English-only). hf_dataset_path assumes the da/nl HF builds live alongside en.
+    # Danish and Dutch need --cv_test_tsv pointing at the matching-language
+    # transcript/<lang>/test.tsv; the auto-download default is English.
     "cv22_da": {
         "hf_dataset_path": "data/cv22_hf/da",
         "demographic_source": "cv22_tsv",
         "demographic_columns": None,
-        "tag_suffix": "cv22_da",
     },
     "cv22_nl": {
         "hf_dataset_path": "data/cv22_hf/nl",
         "demographic_source": "cv22_tsv",
         "demographic_columns": None,
-        "tag_suffix": "cv22_nl",
     },
     "fairspeech": {
         "hf_dataset_path": "data/fairspeech_hf",
         "demographic_source": "hf_columns",
         "demographic_columns": ["gender", "age", "l1", "ses", "ethnicity"],
-        "tag_suffix": "fairspeech",
     },
 }
 
@@ -150,9 +143,9 @@ def main():
 
     dataset_cfg = DATASETS[args.dataset]
     hf_dataset_path = PROJECT_ROOT / dataset_cfg["hf_dataset_path"]
-    if args.dataset != "cv22" and not hf_dataset_path.exists():
+    if not hf_dataset_path.exists():
         print(f"[Sweep] WARNING: HF dataset for '{args.dataset}' not found at {hf_dataset_path}. "
-              f"Run the matching builder under datamodule/hf_{args.dataset}.py first.")
+              f"Build it with the matching script under datamodule/ first.")
 
     print(f"[Sweep] dataset:        {args.dataset}  ({hf_dataset_path})")
     print(f"[Sweep] depths:         {depths}")

@@ -22,7 +22,7 @@ import whisper
 from datasets import load_from_disk
 
 
-class SpeechDatasetHF(torch.utils.data.Dataset):
+class SpeechDatasetHF(Dataset):
     """
     Dataset for Speech-to-Text with LLM using HuggingFace Dataset format.
 

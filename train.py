@@ -15,7 +15,6 @@ import time
 import argparse
 import gc
 import math
-import sys
 
 # Fix CUDA memory fragmentation
 os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
@@ -23,7 +22,7 @@ os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 import torch
 from torch.utils.data import DataLoader
 from torch.nn.utils import clip_grad_norm_
-from torch.optim.lr_scheduler import CosineAnnealingLR, LambdaLR
+from torch.optim.lr_scheduler import LambdaLR
 from omegaconf import OmegaConf
 
 from utils.utils import set_seed, get_device, resolve_pad_token, ensure_dir, save_checkpoint, save_lora_adapter
@@ -31,8 +30,8 @@ from utils.log_config import get_logger
 from utils.wand_config import init_wandb
 from models.model import model_builder
 from datamodule.dataset import get_speech_dataset
-from utils.metrics import compute_wer, compute_cer, count_encoder_parameters
-from utils.train_utils import print_model_size, save_and_print_examples
+from utils.metrics import compute_wer, compute_cer
+from utils.train_utils import save_and_print_examples
 
 
 class EarlyStopChecker:

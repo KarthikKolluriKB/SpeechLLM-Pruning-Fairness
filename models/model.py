@@ -11,15 +11,12 @@ Training Modes:
     2. Projector + LoRA: freeze_encoder=true, use_lora=true
 """
 
-import os
-import types
 import torch
 import torch.nn as nn
 import logging
 from torch.nn import CrossEntropyLoss
-import torch.nn.functional as F
-from typing import List, Optional, Tuple, Union
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
+from typing import List, Optional
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import LoraConfig, TaskType, get_peft_model, prepare_model_for_kbit_training
 
 from models.encoder import WhisperWrappedEncoder

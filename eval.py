@@ -26,7 +26,6 @@ import torch
 
 from tqdm import tqdm
 from omegaconf import OmegaConf
-from types import SimpleNamespace
 from torch.utils.data import DataLoader
 
 from models.model import model_builder
@@ -108,7 +107,7 @@ def log_examples_to_wandb(hyp_texts, ref_texts, run, num_examples=50):
     table = wandb.Table(columns=["ID", "Reference", "Hypothesis", "Match"])
 
     for i in range(min(num_examples, len(hyp_texts))):
-        match = "✓" if hyp_texts[i].strip() == ref_texts[i].strip() else ""
+        match = "exact" if hyp_texts[i].strip() == ref_texts[i].strip() else ""
         table.add_data(i, ref_texts[i], hyp_texts[i], match)
 
     run.log({"test/examples": table})

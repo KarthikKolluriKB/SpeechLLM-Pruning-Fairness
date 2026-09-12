@@ -3,16 +3,15 @@ name = "speechllm-pruning-fairness"
 version = "0.1.0"
 description = "Demographic disparities under audio encoder pruning in SLAM-ASR speech LLMs"
 readme = "README.md"
+authors = [{ name = "KarthikKolluriKB" }]
 requires-python = ">=3.10"
 dependencies = [
     "blobfile>=3.1.0",
     "datasets>=4.0.0",
-    "evaluate>=0.4.6",
     "hf-xet>=1.1.9",
     "huggingface-hub[cli]>=0.34.4",
     "jiwer>=4.0.0",
     "librosa>=0.10.0",
-    "matplotlib>=3.10.8",
     "numpy>=1.26.0",
     "omegaconf>=2.3.0",
     "openai-whisper>=20250625",
@@ -23,8 +22,14 @@ dependencies = [
     "soundfile>=0.13.1",
     "tiktoken>=0.11.0",
     "torch>=2.8.0",
-    "torchaudio>=2.8.0",
-    "torchtnt>=0.2.4",
+    "tqdm>=4.66.0",
     "transformers>=4.55.4",
     "wandb>=0.21.3",
 ]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["datamodule", "models", "utils", "scoring"]

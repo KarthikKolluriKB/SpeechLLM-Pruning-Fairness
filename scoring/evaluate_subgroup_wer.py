@@ -10,12 +10,10 @@ from __future__ import annotations
 import argparse
 import csv
 import gc
-import json
 import re
 import sys
 from pathlib import Path
 
-import numpy as np
 import torch
 from omegaconf import OmegaConf
 from torch.utils.data import DataLoader
@@ -515,7 +513,7 @@ def main():
         print(f"[Eval] Reading demographics from HF dataset columns: "
               f"{args.demographic_columns}")
         from datasets import load_from_disk
-        # The inference loop already loaded the HF dataset, but it's
+        # reloaded here: run_inference keeps its own copy scoped internally
         hf_dataset_path = cfg.data.hf_dataset_path
         ds = load_from_disk(hf_dataset_path)
         split_name = args.split
