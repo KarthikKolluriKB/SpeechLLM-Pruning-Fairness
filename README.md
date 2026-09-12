@@ -5,6 +5,8 @@ Code for the paper **Pruning for Efficiency, Paying in Fairness: Demographic Dis
 **Authors:** Ganesh Pavan Kartikeya Bharadwaj Kolluri, Michael Kampouridis, Ravi Shekhar<br>
 School of Computer Science and Electronic Engineering, University of Essex, UK
 
+**Paper:** link coming soon.
+
 ## Summary
 
 Speech-LLMs are expensive to run, so compression is a routine step before deployment. Compressed models are normally validated on aggregate word error rate, a single number over the whole evaluation set. But speech recognition already performs unevenly across demographic groups, and an aggregate cannot say which group paid for a compression decision.
