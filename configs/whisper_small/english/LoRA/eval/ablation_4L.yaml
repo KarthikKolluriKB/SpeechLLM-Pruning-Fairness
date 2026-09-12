@@ -1,0 +1,96 @@
+# Evaluation: whisper-small + LoRA, 8 encoder layers removed top-down.
+# Corpus: Common Voice 22 english (en) test split.
+# Model settings must match the training config that produced the checkpoint.
+
+model:
+  model_name: ASRLLM
+  file: models/model.py:ASRLLM
+
+  llm_model_name: qwen2.5-3B
+  llm_model: Qwen/Qwen2.5-3B
+  llm_dim: 2048
+  llm_model_path: null
+  llm_type: decoder_only
+
+  encoder_model_name: whisper-small
+  encoder_model: small
+  encoder_ds_rate: 2
+  encoder_model_path: null
+  encoder_dim: 768
+  encoder_num_layers: 4  # top 8 layers removed
+
+  projector: concatLinear
+  projector_ds_rate: 5
+  projector_hidden_dim: 2048
+  projector_dropout: 0.1
+  modal: audio
+  normalize: false
+  encoder_type: finetune
+
+eval:
+  projector_path: outputs/whisper_small/english/ablation_4L_lora/checkpoint_best_wer.pt
+
+  batch_size: 16
+  num_workers: 4
+
+  max_new_tokens: 128
+  num_beams: 2
+  repetition_penalty: 1.0
+  length_penalty: 1.0
+  temperature: 1.0
+  do_sample: false
+
+  output_dir: outputs/whisper_small/english/ablation_4L_lora/eval/
+  save_predictions: true
+
+train:
+  model_name: ASRLLM
+  batch_size: 16
+  val_batch_size: 16
+  num_workers: 4
+  output_dir: outputs/whisper_small/english/ablation_4L_lora/
+  freeze_llm: true
+  freeze_encoder: true
+  mixed_precision: true
+  quantization: false
+  one_gpu: true
+  use_peft: true
+  use_lora: true
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.1
+    target_modules:
+      - q_proj
+      - v_proj
+      - k_proj
+      - o_proj
+
+
+data:
+  dataset: speech_dataset
+  file: datamodule/dataset.py:get_speech_dataset
+  hf_dataset_path: data/cv22_hf/en
+  train_split: train
+  val_split: validation
+  test_split: test
+  use_raw_transcription: false
+  input_type: mel
+  mel_size: 80
+  normalize: false
+  projector_ds_rate: 5
+  use_variable_length: true
+  max_audio_length: 30
+  fix_length_audio: -1
+  max_target_chars: 500
+  inference_mode: true
+
+log:
+  use_wandb: false
+  wandb_dir: ./wandb
+  wandb_entity_name: null
+  wandb_project_name: SLAM_ASR_whisper_small_english_lora
+  wandb_exp_name: eval_whisper-small_english_ablation_4L_lora
+  log_dir: ./logs
+  log_filename: eval_whisper-small_english_ablation_4L_lora.log
+  log_interval: 100

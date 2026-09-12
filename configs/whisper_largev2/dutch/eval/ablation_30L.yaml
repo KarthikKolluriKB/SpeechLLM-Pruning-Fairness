@@ -1,0 +1,85 @@
+# Evaluation: whisper-largev2, 2 encoder layers removed top-down.
+# Corpus: Common Voice 22 dutch (nl) test split.
+# Model settings must match the training config that produced the checkpoint.
+
+model:
+  model_name: ASRLLM
+  file: models/model.py:ASRLLM
+
+  llm_model_name: qwen2.5-3B
+  llm_model: Qwen/Qwen2.5-3B
+  llm_dim: 2048
+  llm_model_path: null
+  llm_type: decoder_only
+
+  encoder_model_name: whisper-largev2
+  encoder_model: large-v2
+  encoder_ds_rate: 2
+  encoder_model_path: null
+  encoder_dim: 1280
+  encoder_num_layers: 30  # top 2 layers removed
+
+  projector: concatLinear
+  projector_ds_rate: 5
+  projector_hidden_dim: 2048
+  projector_dropout: 0.1
+  modal: audio
+  normalize: false
+  encoder_type: finetune
+
+eval:
+  projector_path: outputs/whisper_largev2/dutch/ablation_30L/checkpoint_best_wer.pt
+
+  batch_size: 16
+  num_workers: 4
+
+  max_new_tokens: 128
+  num_beams: 2
+  repetition_penalty: 1.0
+  length_penalty: 1.0
+  temperature: 1.0
+  do_sample: false
+
+  output_dir: outputs/whisper_largev2/dutch/ablation_30L/eval/
+  save_predictions: true
+
+train:
+  model_name: ASRLLM
+  batch_size: 16
+  val_batch_size: 16
+  num_workers: 4
+  output_dir: outputs/whisper_largev2/dutch/ablation_30L/
+  freeze_llm: true
+  freeze_encoder: true
+  mixed_precision: true
+  quantization: false
+  one_gpu: true
+  use_peft: false
+
+data:
+  dataset: speech_dataset
+  file: datamodule/dataset.py:get_speech_dataset
+  hf_dataset_path: data/cv22_hf/nl
+  train_split: train
+  val_split: validation
+  test_split: test
+  use_raw_transcription: false
+  input_type: mel
+  mel_size: 80
+  normalize: false
+  projector_ds_rate: 5
+  use_variable_length: true
+  max_audio_length: 30
+  fix_length_audio: -1
+  max_target_chars: 500
+  inference_mode: true
+
+log:
+  use_wandb: false
+  wandb_dir: ./wandb
+  wandb_entity_name: null
+  wandb_project_name: SLAM_ASR_whisper_largev2_dutch
+  wandb_exp_name: eval_whisper-largev2_dutch_ablation_30L
+  log_dir: ./logs
+  log_filename: eval_whisper-largev2_dutch_ablation_30L.log
+  log_interval: 100

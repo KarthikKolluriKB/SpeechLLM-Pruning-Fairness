@@ -1,0 +1,120 @@
+# Projector + LoRA training: whisper-medium, Common Voice 22 danish (da), 2 encoder layers removed top-down.
+# 3592 training utterances, batch 4, 8 epochs.
+
+model:
+  model_name: ASRLLM
+  file: models/model.py:ASRLLM
+
+  llm_model_name: qwen2.5-3B
+  llm_model: Qwen/Qwen2.5-3B
+  llm_dim: 2048
+  llm_model_path: null
+  llm_type: decoder_only
+
+  encoder_model_name: whisper-medium
+  encoder_model: medium
+  encoder_ds_rate: 2
+  encoder_model_path: null
+  encoder_dim: 1024
+  encoder_num_layers: 22  # top 2 layers removed
+
+  projector: concatLinear
+  projector_ds_rate: 5
+  projector_hidden_dim: 2048
+  projector_dropout: 0.1
+  modal: audio
+  normalize: false
+  encoder_type: finetune
+
+train:
+  model_name: ASRLLM
+  run_validation: true
+
+  batch_size: 4
+  val_batch_size: 8
+  gradient_accumulation_steps: 1
+  num_workers: 4
+  max_eval_batches: 200
+
+  max_new_tokens: 128
+  repetition_penalty: 1.5
+
+  num_epochs: 8
+  total_steps: 7184
+  warmup_steps: 359
+  validation_interval: 359
+
+  lr: 1.0e-4
+  weight_decay: 0.01
+  grad_clip: 1.0
+  gamma: 0.85
+
+  use_fp16: false
+  mixed_precision: true
+  quantization: false
+
+  freeze_encoder: true
+  freeze_llm: true
+  freeze_layers: false
+  num_freeze_layers: 0
+
+  use_lora: true
+  lora:
+    r: 8
+    alpha: 16
+    dropout: 0.1
+    target_modules:
+      - q_proj
+      - v_proj
+      - k_proj
+      - o_proj
+
+  output_dir: outputs/whisper_medium/danish/ablation_22L_lora/
+  save_model: true
+  seed: 42
+
+  one_gpu: true
+  use_peft: true
+  use_fast_kernels: false
+  batching_strategy: packing
+  context_length: 384
+
+scheduler:
+  name: cosine_with_warmup
+  total_training_steps: 7184
+  warmup_steps: 359
+  min_lr_ratio: 0.1
+
+early_stopping:
+  monitor: val/wer
+  mode: min
+  patience: 4
+  min_delta: 0.003
+
+data:
+  dataset: speech_dataset
+  file: datamodule/dataset.py:get_speech_dataset
+  hf_dataset_path: data/cv22_hf/da
+  train_split: train
+  val_split: validation
+  test_split: test
+  use_raw_transcription: false
+  input_type: mel
+  mel_size: 80
+  normalize: false
+  projector_ds_rate: 5
+  use_variable_length: true
+  max_audio_length: 30
+  fix_length_audio: -1
+  max_target_chars: 500
+  inference_mode: false
+
+log:
+  use_wandb: false
+  wandb_dir: ./wandb
+  wandb_entity_name: null
+  wandb_project_name: SLAM_ASR_whisper_medium_danish_lora
+  wandb_exp_name: whisper-medium_danish_ablation_22L_lora
+  log_dir: ./logs
+  log_filename: whisper-medium_danish_ablation_22L_lora.log
+  log_interval: 100

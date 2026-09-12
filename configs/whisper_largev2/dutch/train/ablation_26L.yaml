@@ -1,0 +1,109 @@
+# Projector-only training: whisper-largev2, Common Voice 22 dutch (nl), 6 encoder layers removed top-down.
+# 43458 training utterances, batch 8, 4 epochs.
+
+model:
+  model_name: ASRLLM
+  file: models/model.py:ASRLLM
+
+  llm_model_name: qwen2.5-3B
+  llm_model: Qwen/Qwen2.5-3B
+  llm_dim: 2048
+  llm_model_path: null
+  llm_type: decoder_only
+
+  encoder_model_name: whisper-largev2
+  encoder_model: large-v2
+  encoder_ds_rate: 2
+  encoder_model_path: null
+  encoder_dim: 1280
+  encoder_num_layers: 26  # top 6 layers removed
+
+  projector: concatLinear
+  projector_ds_rate: 5
+  projector_hidden_dim: 2048
+  projector_dropout: 0.1
+  modal: audio
+  normalize: false
+  encoder_type: finetune
+
+train:
+  model_name: ASRLLM
+  run_validation: true
+
+  batch_size: 8
+  val_batch_size: 8
+  gradient_accumulation_steps: 1
+  num_workers: 4
+  max_eval_batches: 200
+
+  max_new_tokens: 128
+  repetition_penalty: 1.5
+
+  num_epochs: 4
+  total_steps: 21732
+  warmup_steps: 1087
+  validation_interval: 1087
+
+  lr: 1.0e-4
+  weight_decay: 0.01
+  grad_clip: 1.0
+  gamma: 0.85
+
+  use_fp16: false
+  mixed_precision: true
+  quantization: false
+
+  freeze_encoder: true
+  freeze_llm: true
+  freeze_layers: false
+  num_freeze_layers: 0
+
+  output_dir: outputs/whisper_largev2/dutch/ablation_26L/
+  save_model: true
+  seed: 42
+
+  one_gpu: true
+  use_peft: false
+  use_fast_kernels: false
+  batching_strategy: packing
+  context_length: 384
+
+scheduler:
+  name: cosine_with_warmup
+  total_training_steps: 21732
+  warmup_steps: 1087
+  min_lr_ratio: 0.1
+
+early_stopping:
+  monitor: val/wer
+  mode: min
+  patience: 2
+  min_delta: 0.005
+
+data:
+  dataset: speech_dataset
+  file: datamodule/dataset.py:get_speech_dataset
+  hf_dataset_path: data/cv22_hf/nl
+  train_split: train
+  val_split: validation
+  test_split: test
+  use_raw_transcription: false
+  input_type: mel
+  mel_size: 80
+  normalize: false
+  projector_ds_rate: 5
+  use_variable_length: true
+  max_audio_length: 30
+  fix_length_audio: -1
+  max_target_chars: 500
+  inference_mode: false
+
+log:
+  use_wandb: false
+  wandb_dir: ./wandb
+  wandb_entity_name: null
+  wandb_project_name: SLAM_ASR_whisper_largev2_dutch
+  wandb_exp_name: whisper-largev2_dutch_ablation_26L
+  log_dir: ./logs
+  log_filename: whisper-largev2_dutch_ablation_26L.log
+  log_interval: 100
