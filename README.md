@@ -51,25 +51,25 @@ LoRA is applied to the query, key, value and output projections of every LLM att
 
 **Decoding.** Projected audio embeddings are prepended to a fixed plain-text prompt, `Transcribe speech to text.`, held constant across scales, depths and languages. Beam search of width 2, no sampling, no repetition or length penalty, up to 128 new tokens, the same for base and LoRA-adapted systems.
 
-**Measures.** Worst-group WER at each depth is the primary measure. Alongside it we report the absolute gap (worst minus best, in percentage points) and the ratio between them as a scale-free check, since the two diverge when all groups degrade together. Significance comes from a paired resampling test over 2,000 bootstrap resamples of the evaluation set. Claims are limited to the usable range, the contiguous depths where aggregate WER stays at or below 40%. A group is analysed only when it has at least 200 utterances and 30 minutes of audio.
+**Measures.** Worst-group WER at each depth is the primary measure. Alongside it we report the absolute gap (worst minus best, in percentage points) and the ratio between them as a scale-free check, since the two diverge when all groups degrade together. Claims are limited to the usable range, the contiguous depths where aggregate WER stays at or below 40%. A group is analysed only when it has at least 200 utterances and 30 minutes of audio.
 
 ## Findings
 
 ### 1. Aggregate WER hides what pruning does to the worst-served group
 
-![Black and Asian WER on Fair-Speech under top-down pruning of Whisper large-v2](docs/figures/concealment_largev2.png)
+<img src="docs/figures/concealment_largev2.png" width="420" alt="Black and Asian WER on Fair-Speech under top-down pruning of Whisper large-v2">
 
 On Whisper large-v2 evaluated on Fair-Speech, removing the top two encoder layers *improves* aggregate WER from 21.6% to 21.1% (p=.038). In that same configuration, Black speakers are the only group whose error rate rises significantly, by 0.9 pp (p=.009). Anyone watching the aggregate would record a small win at the depth where the worst-performing group got worse. By eight removed layers the Black-Asian gap has grown from 13.5 to 24.5 percentage points.
 
 ### 2. The concealment is specific to the largest encoder
 
-![Per-group WER on Fair-Speech at three Whisper scales](docs/figures/per_group_wer_by_scale.png)
+<img src="docs/figures/per_group_wer_by_scale.png" width="640" alt="Per-group WER on Fair-Speech at three Whisper scales">
 
 The disparity is inherited at every scale. Before any pruning, Black speakers face roughly twice the word error rate of Asian speakers on all three encoders (ratio 2.03 small, 2.16 medium, 1.99 large-v2). What differs is whether the aggregate warns you. The first prune costs the small model 4.7 pp of aggregate WER and the medium model 2.3 pp, while large-v2 improves by 0.5 pp. The disparity ratio rises at the first prune only on large-v2, from 1.99 to 2.15. On small and medium it falls, because the better-served group loses proportionally more as both degrade sharply.
 
 ### 3. LoRA lowers everyone's error rate and still widens the gap
 
-![Per-group WER change under pruning, with and without LoRA](docs/figures/lora_vs_base.png)
+<img src="docs/figures/lora_vs_base.png" width="640" alt="Per-group WER change under pruning, with and without LoRA">
 
 LoRA improves aggregate WER at every depth, from 21.6% to 17.7% unpruned and from 37.6% to 33.0% at eight removed layers, and it extends the usable pruning range by two more layers. The recovery is not evenly distributed. The Black-to-Asian ratio is wider with LoRA at every depth: 1.99 to 2.20 unpruned, 1.93 to 2.22 at eight removed layers. Adaptation compensates the best-performing groups more. At ten removed layers it recovers 8.0 pp for Asian speakers and 3.3 pp for Black speakers.
 
